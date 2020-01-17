@@ -33,24 +33,24 @@ public:
 	PusherClass(uint8_t IN1, uint8_t IN2, uint8_t PWM, uint8_t STBY, uint8_t FRNT_SENS, uint8_t BACK_SENS, uint8_t& launcher_enable)
 		: pin_in1(IN1), pin_in2(IN2), pin_stb(STBY), pin_pwm(PWM), pin_frnt(FRNT_SENS), pin_back(BACK_SENS), enabled(&launcher_enable) {
 
-		pinMode(pin_in1, OUTPUT);																						// the tb6612 chip has 2 inputs for driving the motor
-		digitalWrite(pin_in1, LOW);																					// we need to set them as output and low at the arduino side
+		pinMode(pin_in1, OUTPUT);																					// the tb6612 chip has 2 inputs for driving the motor
+		digitalWrite(pin_in1, LOW);																				// we need to set them as output and low at the arduino side
 
 		pinMode(pin_in2, OUTPUT);
 		digitalWrite(pin_in2, LOW);
 
-		pinMode(pin_pwm, OUTPUT);																						// pwm drives the speed of the pusher motor
-		set_speed(0);																												// we use the standard arduino function for it
+		pinMode(pin_pwm, OUTPUT);																					// pwm drives the speed of the pusher motor
+		set_speed(0);																											// we use the standard arduino function for it
 
-		pinMode(pin_stb, OUTPUT);																						// not sure if the standby is needed, but 
-		digitalWrite(pin_stb, HIGH);																				// it needs to be a high level for the tb6612 chip
+		pinMode(pin_stb, OUTPUT);																					// not sure if the standby is needed, but 
+		digitalWrite(pin_stb, HIGH);																			// it needs to be a high level for the tb6612 chip
 
-		register_PCINT(pin_frnt);																						// the pusher has two sensors to detect the position
-		register_PCINT(pin_back);																						// back and front. it is needed for driving the motor
+		register_PCINT(pin_frnt);																					// the pusher has two sensors to detect the position
+		register_PCINT(pin_back);																					// back and front. it is needed for driving the motor
 
-		if (digitalRead(pin_back) == 0) position = 3;												// if the back sens is raised, we have a stable position
+		if (digitalRead(pin_back) == 0) position = 3;											// if the back sens is raised, we have a stable position
 
-		operate = 3;																												// we start in returning mode			
+		operate = 3;																											// we start in returning mode			
 	}
 	~PusherClass() {}
 

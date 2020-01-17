@@ -144,10 +144,9 @@ void setup() {
 
 	eeprom.get( 2, 8, &setting_store);																	// read the others settings 
 	eeprom.get(10, 8, &profile_store);																	// read the function settings
-
+	
 	profile_ptr = &profile_store[setting_store.profile];								// assign profile pointer to current profile store
-
-	pusher.mode = &profile_ptr->mode ;																	// how many darts per fire push
+	pusher.mode = &profile_ptr->mode;																		// how many darts per fire push
 	launcher.fire_speed = &profile_ptr->speed;													// fire speed in % of max_speed
 
 	launcher.speedup_time = &setting_store.speedup_time;								// holds the time the motor needs to speedup
@@ -157,7 +156,7 @@ void setup() {
 	buzzer.init();
 	buzzer.on(BEEP_INIT);
 
-	dbg << F("init complete, mode: ") << profile_ptr->mode << F(", speed: ") << profile_ptr->speed << F(", speedup_time: ") << setting_store.speedup_time << F(", standby_speed: ") << setting_store.standby_speed << F(", standby_time: ") << setting_store.standby_time << F("\n\n");
+	dbg << F("init complete, mode: ") << *pusher.mode << F(", speed: ") << profile_ptr->speed << F(", speedup_time: ") << setting_store.speedup_time << F(", standby_speed: ") << setting_store.standby_speed << F(", standby_time: ") << setting_store.standby_time << F("\n\n");
 }
 
 
@@ -280,10 +279,16 @@ void encoder_button(int8_t status) {
 
 void quick_click(uint8_t number, uint8_t status) {
 	if (status != 1) return;
+
 	setting_store.profile = number;																			// set the current profile number
-	profile_ptr = &profile_store[setting_store.profile];								// assign profile pointer to current profile store
+	profile_ptr = &profile_store[setting_store.profile];									// assign profile pointer to current profile store
+	pusher.mode = &profile_ptr->mode;																		// how many darts per fire push
+	launcher.fire_speed = &profile_ptr->speed;													// fire speed in % of max_speed
+
 	if (setting_store.buzzer_menu) buzzer.on(BEEP_SHORT);								// some beep while button pressed
 	display_status();
+
+	dbg << F("speed: ") << *launcher.fire_speed << F(", mode: ") << *pusher.mode << '\n';
 }
 
 
@@ -365,7 +370,6 @@ void draw_battery(uint8_t battery) {
 	u8g2.print(battery, DEC);																						// and writes the battery level
 	u8g2.print("%");
 }
-
 
 void pci_ISR (uint8_t pin, uint8_t status, uint32_t time) {
 	// encoder class - encoder left/right turn
